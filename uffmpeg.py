@@ -50,14 +50,14 @@ avcodec_alloc_context3 = _avcodec.func("P", "avcodec_alloc_context3", "P")
 avcodec_open2 = _avcodec.func("i", "avcodec_open2", "PPP")
 av_frame_alloc = _avcodec.func("P", "av_frame_alloc", "")
 
-AVPacket_layout = OrderedDict((
-    ("buf", (uctypes.PTR, uctypes.VOID)),
-    ("pts", uctypes.INT64),
-    ("dts", uctypes.INT64),
-    ("data", (uctypes.PTR, uctypes.UINT8)),
-    ("size", uctypes.INT32),
-    # There're more, but we don't care
-))
+AVPacket_layout = OrderedDict({
+    "buf": (uctypes.PTR, uctypes.VOID),
+    "pts": uctypes.INT64,
+    "dts": uctypes.INT64,
+    "data": (uctypes.PTR, uctypes.UINT8),
+    "size": uctypes.INT32,
+    # There're more, but for now we don't care
+})
 uctypes.calc_offsets(AVPacket_layout)
 print(AVPacket_layout)
 
@@ -65,17 +65,17 @@ print("sizeof(AVPacket_layout) =", uctypes.sizeof(AVPacket_layout))
 
 AV_NUM_DATA_POINTERS = 8
 
-AVFrame_layout = OrderedDict((
-    ("data", (uctypes.ARRAY, AV_NUM_DATA_POINTERS, (uctypes.PTR, uctypes.UINT8))),
-    ("linesize", (uctypes.ARRAY, AV_NUM_DATA_POINTERS | uctypes.INT32)),
-    ("extended_data", (uctypes.PTR, uctypes.VOID)),
-    ("width", uctypes.INT32),
-    ("height", uctypes.INT32),
-    ("nb_samples", uctypes.INT32),
-    ("format", uctypes.INT32),
-    ("key_frame", uctypes.INT32),
-    ("pict_type", uctypes.INT32),
-))
+AVFrame_layout = OrderedDict({
+    "data": (uctypes.ARRAY, AV_NUM_DATA_POINTERS, (uctypes.PTR, uctypes.UINT8)),
+    "linesize": (uctypes.ARRAY, AV_NUM_DATA_POINTERS | uctypes.INT32),
+    "extended_data": (uctypes.PTR, uctypes.VOID),
+    "width": uctypes.INT32,
+    "height": uctypes.INT32,
+    "nb_samples": uctypes.INT32,
+    "format": uctypes.INT32,
+    "key_frame": uctypes.INT32,
+    "pict_type": uctypes.INT32,
+})
 uctypes.calc_offsets(AVFrame_layout)
 print("sizeof(AVPacket_layout) =", uctypes.sizeof(AVFrame_layout))
 
