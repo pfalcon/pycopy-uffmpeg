@@ -82,3 +82,12 @@ print("sizeof(AVPacket_layout) =", uctypes.sizeof(AVFrame_layout))
 av_parser_parse2 = _avcodec.func("i", "av_parser_parse2", "PPppPiQQQ")
 avcodec_send_packet = _avcodec.func("i", "avcodec_send_packet", "PP")
 avcodec_receive_frame = _avcodec.func("i", "avcodec_receive_frame", "PP")
+
+
+_swscale = ffi.open("libswscale.so.4")
+
+def F(ret, name, params):
+    globals()[name] = _swscale.func(ret, name, params)
+
+F("P", "sws_getContext", "iiiiiiippP")
+F("i", "sws_scale", "pPPiipP")
