@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import sys
+import array
 import uctypes
 from uffmpeg import *
 from uerrno import EAGAIN
@@ -49,6 +50,11 @@ print("frame addr:", hex(frame))
 frame = uctypes.struct(frame, AVFrame_layout)
 print("frame:", frame)
 
+sws_ctx = None
+rgb_linesize = None
+rgb_data = None
+rgb_data_arr = None
+
 
 frame_cnt = 0
 
@@ -59,6 +65,12 @@ def pgm_save(buf, wrap, xsize, ysize, fname):
         f.write("P5\n%d %d\n%d\n" % (xsize, ysize, 255))
         for i in range(ysize):
             f.write(uctypes.bytearray_at(int(buf) + i * wrap, xsize))
+
+
+def ppm_save(buf, xsize, ysize, fname):
+    with open(fname, "wb") as f:
+        f.write("P6\n%d %d\n%d\n" % (xsize, ysize, 255))
+        f.write(buf)
 
 
 def decode(dec_ctx, frame, pkt):
@@ -79,9 +91,30 @@ def decode(dec_ctx, frame, pkt):
 #        print("saving frame %3d, fmt: %d, pict_type: %d\n", dec_ctx.frame_number, frame.format, frame.pict_type);
         print("saving frame ??, fmt: %d, pict_type: %d" % (frame.format, frame.pict_type));
 
+        global sws_ctx, rgb_linesize, rgb_data, rgb_data_arr
+
+        if not sws_ctx:
+            sws_ctx = sws_getContext(
+                frame.width, frame.height, AV_PIX_FMT_YUV420P,
+                frame.width, frame.height, AV_PIX_FMT_RGB24,
+                0, None, None, None)
+            print("sws_ctx:", hex(sws_ctx))
+
+            rgb_linesize = array.array("i", [frame.width * 3])
+            rgb_data = bytearray(frame.width * frame.height * 3)
+            rgb_data_arr = array.array("l", [uctypes.addressof(rgb_data)])
+            print(rgb_data_arr, rgb_linesize)
+
+        res = sws_scale(sws_ctx, frame.data, frame.linesize, 0, frame.height, rgb_data_arr, rgb_linesize)
+        print("sws_scale:", res)
+
         global frame_cnt
-        pgm_save(frame.data[0], frame.linesize[0],
-                 frame.width, frame.height, "frame-%03d.pgm" % frame_cnt);
+
+#        pgm_save(frame.data[0], frame.linesize[0],
+#                 frame.width, frame.height, "frame-%03d.pgm" % frame_cnt);
+        ppm_save(rgb_data,
+                 frame.width, frame.height, "frame-%03d.ppm" % frame_cnt);
+
         frame_cnt += 1
 
 
