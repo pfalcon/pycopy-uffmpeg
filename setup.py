@@ -1,11 +1,11 @@
 from setuptools import setup
 
 
-setup(name='micropython-uffmpeg',
-      version='0.1.1',
-      description="MicroPython bindings for FFmpeg video handling library",
-      long_description="MicroPython bindings for FFmpeg video handling library.",
-      url='https://github.com/pfalcon/micropython-uffmpeg',
+setup(name='pycopy-uffmpeg',
+      version='0.2',
+      description="Pycopy bindings for FFmpeg video handling library",
+      long_description="Pycopy (https://github.com/pfalcon/pycopy) bindings for FFmpeg video handling library.",
+      url='https://github.com/pfalcon/pycopy-uffmpeg',
       author='Paul Sokolovsky',
       author_email='pfalcon@users.sourceforge.net',
       license='MIT',
